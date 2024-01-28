@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <link rel="stylesheet" href="Compiler-Construction.css">
+
+    <title>Compiler Construction</title>
+</head>
+
+<body>
+    <div class="navbar">
+        <a href="index.html" class="before-mids">Before Mids</a>
+        <a href="after-mids.html" class="after-mids">After Mids</a>
+      </div>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+    <p class="text-start dates">6th December 2023</p>
+    <p class="text-start">First Set:-</p>
+    <pre class="text-start">S => (S) S | Epsilon 
+</pre>
+    <table >
+        <tr>
+            <th></th>
+            <th>FIRST</th>
+            <th>FOLLOW</th>
+        </tr>
+        <tr>
+            <td>S</td>
+            <td>{(, epsilon}</td>
+            <td>{$, )}</td>
+        </tr>
+    </table>
+    <p class="text-start">dollar is used in place of terminal.</p>
+    <h6 class="text-center">LL(1) Parsing Algorithm</h6>
+    <pre class="text-start">
+        Building the Parsing Table 
+
+        column represents terminals i.e. (,), epsilon 
+        rows represents the non terminals i.e. S 
+    </pre>
+    <pre class="text-start">S => (S) S | Epsilon 
+    </pre>
+    <p class="text-start">epsilon is invisible in the parsing table.</p>
+    <table >
+        <tr>
+            <th></th>
+            <th>(</th>
+            <th>)</th>
+            <th>$</th>
+        </tr>
+        <tr>
+            <td>S</td>
+            <td>S => (S)S (came on the basis of first rule)</td>
+            <td>S => epsilon (came on the basis of follow set)</td>
+            <td>S => epsilon (came on the basis of follow set)</td>
+        </tr>
+    </table>
+    <pre class="text-start">LL1 uses lookahead symbol. Therefore, dollar symbol is used in the end.
+
+        cells are filled on the basis of first sets and follow sets (if first set has epsilon). Some cells may or maynot be filled.
+    </pre>
+    <pre class="text-start">( is produced by first production so wrote first production.
+
+        If we have only epsilon in first set, then we use follow sets. Otherwise, they are not used.
+
+        Epsilon is not used in the first set until all non terminals have epsilon values.
+    </pre>
+    <pre class="text-start">
+        S => ABC 
+        A => aA | b | epsilon 
+        B => bB | epsilon 
+        C => cC | epsilon 
+    </pre>
+    <table >
+        <tr>
+            <th></th>
+            <th>FIRST SETS</th>
+            <th>FOLLOW SETS</th>
+        </tr>
+        <tr>
+            <td>S</td>
+            <td>{a,b,c,epsilon}</td>
+            <td>{$}</td>
+        </tr>
+        <tr>
+            <td>A</td>
+            <td>{a,b,epsilon}</td>
+            <td>{$,b,c}</td>
+        </tr>
+        <tr>
+            <td>B</td>
+            <td>{b, epsilon}</td>
+            <td>{$, c}</td>
+        </tr>
+        <tr>
+            <td>C</td>
+            <td>{b, epsilon}</td>
+            <td>{$}</td>
+        </tr>
+    </table>
+    <h6 class="text-center">Parsing Table</h6>
+    <table >
+        <tr>
+            <th></th>
+            <th>a</th>
+            <th>b</th>
+            <th>c</th>
+            <th>$</th>
+        </tr>
+        <tr>
+            <td>S</td>
+            <td>S => ABC</td>
+            <td>S => ABC</td>
+            <td>S => ABC</td>
+            <td>S => ABC (since S has epsilon)</td>
+        </tr>
+        <tr>
+            <td>A</td>
+            <td>A => aA</td>
+            <td>A => b , A => epsilon</td>
+            <td>A => epsilon</td>
+            <td>A => epsilon (since A has epsilon)</td>
+        </tr>
+        <tr>
+            <td>B</td>
+            <td></td>
+            <td>B => bB</td>
+            <td>B => epsilon</td>
+            <td>B => epsilon (since B has epsilon)</td>
+        </tr>
+        <tr>
+            <td>C</td>
+            <td></td>
+            <td></td>
+            <td>C => cC</td>
+            <td>C => epsilon (since C has epsilon)</td>
+        </tr>
+    </table>
+    <h6 class="text-center">Syntax Checking / Performing the Parse</h6>
+
+    <h6 class="text-start">LL1-Actions</h6>
+    <ol>
+        <li>Replace for Non Terminals</li>
+        <li>Match for Terminals</li>
+    </ol>
+    <table >
+        <tr>
+            <th>No.</th>
+            <th>Parsing Stack</th>
+            <th>Input</th>
+            <th>Action</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>$S</td>
+            <td>()$</td>
+            <td>replace S => (S)S</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>$S)S(</td>
+            <td>()$</td>
+            <td>match</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>$S)S</td>
+            <td>)$</td>
+            <td>replace S => epsilon</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>$S)</td>
+            <td>)$</td>
+            <td>match</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>$S</td>
+            <td>$</td>
+            <td>replace S => epsilon</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>$</td>
+            <td>$</td>
+            <td>input accepted</td>
+        </tr>
+    </table>
+    <p class="text-start">Solve the following:- (()) ()</p>
+    <pre class="text-start">
+        1) first set 
+        2) follow set 
+        3) parsing table 
+        4) LL1-Actions
+    </pre>
+    <pre class="text-start">
+        Solve the following:-
+        
+E => EAT | T 
+A => + | - 
+T => TMF | F 
+M => * 
+F => (E) | n 
+
+remove left recursion... 
+
+    </pre>
+    <hr>
+    <p class="text-start dates">Dec 13th, 2023</p>
+    <h6 class="text-center">Bottom-Up Parsing</h6>
+    <pre
+        class="text-start">unlike top-down parsing which involve left most derivation, bottom-up parsing involve right most parsing.</pre>
+    <pre class="text-start">It involve the following steps:- </pre>
+    <ol>
+        <li>right most derivation</li>
+        <li>a new start symbol will be introduced in the grammer</li>
+        <p class="text-start">S` => S, where S` means S prime</p>
+        <p class="text-start">S => (S)S | alpha</p>
+        <li>bottom-up parsing algo use DFA for parsing</li>
+        <li>unlike LL(1) parsing which involves replace and match actions, bottom up involves shift (terminals) and
+            reduce (non terminals) actions.</li>
+        <li>that's the reason why bottom-up is also known as shift reduce parsing algorithm.</li>
+        <li>famous algorithms for bottom-up parsing includes LR(0) and LR(1)</li>
+    </ol>
+    <H6 class="text-center">LR(0)</H6>
+    <pre class="text-start">it has no problem with left recursion and has the following steps.</pre>
+    <ol>
+        <li>introduce a new start symbol</li>
+        <li>list LR(0) items (by appending dots))</li>
+        <li>construction of NFA of LR(0) items</li>
+        <li>convert that NFA to DFA</li>
+        <li>build LR(0) parsing table</li>
+        <li>perform parsing using parsing stack</li>
+    </ol>
+    <p class="text-start">For Example: -</p>
+    <pre class="text-start">
+    S` => S
+    S => (S)S | alpha
+    </pre>
+    <p class="text-start">step 2</p>
+    <pre class="text-start">since, the question has 3 productions, we will have to append the dots (listing LR(0) items) to all of them separately. dot is places before and after every word until it reaches the end of the statement or the sentence. LR(0) items are of three main types. 
+        1) Beginning LR(0) item: dot at first (.a)
+        2) Complete LR(0) item: dot at end (a.)
+        3) intermediate LR(0) item: dot in between the sentence (a.a)
+    </pre>
+    <p class="text-center"><img src="Pictures/bottomup1.PNG" alt="Dec13th"></p>
+    <p class="text-start">step 3</p>
+    <pre
+        class="text-start">at first, we create the individual transitions that are taking place and then we fire epsilon transitions on the basis of 2 conditions. epsilon transition is fired only from the non terminal and secondly, the target state non terminal must also be equal to the source state non terminal.</pre>
+    <div class="text-center"> <img src="Pictures/bottomup2.PNG" alt="Dec13th"></div>
+    <div class="text-center"> <img src="Pictures/bottomup3.PNG" alt="Dec13th">
+    </div>
+    <pre class="text-start">to remove any confusion, making it again</pre>
+    <div class="text-center"><img src="Pictures/bottomup4.PNG" alt="Dec13th"></div>
+    <p class="text-start">step 4</p>
+    <pre
+        class="text-start">once, the transitions are completed and epsilon transitions are also fired, we will convert NFA to DFA. In the convertion procedure, we have to combine the entries on the basis of a condition. The target state of epsilon is merged to the source state of epsilon. this is to remove the epsilon which isn't present in DFAs.</pre>
+    <p class="text-center"><img src="Pictures/bottomup5.PNG" alt="Dec13th"></p>
+    <p class="text-start">step 5</p>
+    <p class="text-center">Build LR(0) parsing table</p>
+    <pre
+        class="text-start">if we have beginning and intermediates LR(0) items, we consider them in shift state. otherwise, for complete LR(0) items, we consider them in reduced states.</pre>
+    <p class="text-start">important practice question:- E => E + n | n</p>
+    <hr>
+    <p class="text-start dates">Dec 15th, 2023</p>
+    <h6 class="text-center">Building LR(0) Parsing Table</h6>
+    <pre
+        class="text-start">here, I'll be using a instead of alpha, mistake which I did in the beginning and continued it until here. But, it's over now.</pre>
+    <table >
+        <tr>
+            <th>States</th>
+            <th>Actions</th>
+            <th>Rules</th>
+            <th colspan="3">Inputs (non terminals)</th>
+            <th>Go To (terminals)</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th>(</th>
+            <th>alpha / a</th>
+            <th>)</th>
+            <th></th>
+        </tr>
+        <tr>
+            <td>0</td>
+            <td>Shift</td>
+            <th></th>
+            <td>2</td>
+            <td>6</td>
+            <th></th>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Reduced</td>
+            <td>S`=>S</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Shift</td>
+            <td></td>
+            <td>2</td>
+            <td>6</td>
+            <td></td>
+            <td>3</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Shift</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>4</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Shift</td>
+            <td></td>
+            <td>2</td>
+            <td>6</td>
+            <td></td>
+            <td>5</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Reduced</td>
+            <td>S => (S)S</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>Reduced</td>
+            <td>S=>a</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+</body>
+<h6 class="text-center">Processing of String</h6>
+<pre class="text-start">
+    Processing of the String happens in the reverse order and therefore called reverse engineering.
+    
+    here, we will give some input of our own choice and wil check if parsing is done smoothly or there is a mistake. $ in the beginning of parsing stack represents the stack is empty. And, the dollar in the end of input represents that it's the end.
+
+Shift is used to put the element present at the left most position of the input to the top of the stack i.e. the right most position of the parsing stack.
+
+Reduced uses some condition or rules to make an attempt to reduce the above parsing stack to a smaller value. This is done by remove the values and replacing them to the non terminals.
+
+once, a step is performed, we check the right most 2 values in the parsing stack and check rows (first element) and column (second element) in teh parsing table and put that value at then next of those 2 elements.
+
+$ table isn't made here as LR(0) can't look ahead.
+</pre>
+<table >
+    <tr>
+        <th>No.</th>
+        <th>Parsing Stack</th>
+        <th>Inputs</th>
+        <th>Actions</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>$0</td>
+        <td>(a)a$</td>
+        <td>Shift</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>$0(2</td>
+        <td>a)a$</td>
+        <td>Shift</td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>$0(2a6</td>
+        <td>)a$</td>
+        <td>Reduce (S=>a)</td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>$0(2S3</td>
+        <td>)a$</td>
+        <td>Shift</td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>$0(2S3)4</td>
+        <td>a$</td>
+        <td>Shift</td>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td>$0(2S3)4a6</td>
+        <td>$</td>
+        <td>Reduce (S=>a)</td>
+    </tr>
+    <tr>
+        <td>7</td>
+        <td>$0(2S3)4S5</td>
+        <td>$</td>
+        <td>Reduce [S=>(S)S]</td>
+    </tr>
+    <tr>
+        <td>8</td>
+        <td>$0S1</td>
+        <td>$</td>
+        <td>ACCEPTED</td>
+    </tr>
+</table>
+<hr>
+<p class="text-start dates">Dec 20th, 2023</p>
+<pre class="text-start">The question begins with:- 
+    E` => E 
+    E => E + n | n 
+
+    In step 2, we use the dots before and after every production.
+
+    In step 3, we have to make the NFA by displaying the productions in a graphical format. After this is done, we fire the epsilon transition from every element having non terminal after the dot to every transition having a terminal after the dot. 
+</pre>
+<p class="text-center"><img src="Pictures/Dec-20th.1.png" alt="Dec20th"></p>
+<pre class="text-start">
+    In step 4, we merg all the elements from which the epsilon was fired and the elements to which the epsilon was fired. This makes it a DFA.
+</pre>
+<p class="text-center"><img src="Pictures/Dec-20th.2.png" alt="Dec20th"></p>
+<pre
+    class="text-start">If there is a duplicate transition, it's still a NFA as in this case. So we must also remove the duplicate transition by merging the target states for each duplicate transition. Then, we mark the states from 0 - the last value. Then we mark the states on the basis of shift and reduce states. 
+
+If we have beginning or intermediate LR(0) items, it's a shift state.
+If we have complete LR(0) items, it's a reduce state.
+
+In those scenarios, where we have shift reduce state, we will conclude by saying that shift reduce conflict cannot work with LR(0) algo. We'll have to move on to SLR(1)</pre>
+<p class="text-center"><img src="Pictures/Dec-20th.3.png" alt="Dec20th"></p>
+<h6 class="text-center">SLR(1) | Simple, left to right, right derivation, one look ahead symbol or token.</h6>
+<pre
+    class="text-start">It has more and less the same steps as that of LR(0) algo. After step four where we had created the DFA using the NFA and got the duplicate state and then shift reduce conflict. After that, we have to find the follow sets of all the non terminals.</pre>
+<p class="text-center"><img src="Pictures/Dec-20th.4.png" alt="Dec20th"></p>
+<p class="text-center"><img src="Pictures/Dec-20th.5.png" alt="Dec20th"></p>
+<pre
+    class="text-start">In step 6, we have to create a parsing table which will be a little bit more compact as compared to the parsing table of LR(0) algo. In last step, we make a parsing stack to check a particular grammar, like for this case "n+n"</pre>
+<p class="text-center"><img src="Pictures/Dec-20th.6.png" alt="Dec20th"></p>
+<pre
+    class="text-start">we must always start checking from 0 state, if we are unable to do it, it means that particular grammar isn't applicable. REJECTED</pre>
+<p class="text-center"><img src="Pictures/Dec-20th.7.png" alt="Dec20th"></p>
+<hr>
+<p class="text-start dates">Dec 22nd, 2023</p>
+<h6 class="text-center">SLR(1) Algorithm</h6>
+<p class="text-center"><img src="Pictures/Dec-22nd.1.png" alt="Dec22nd"></p>
+<pre
+    class="text-start">Now, we'll be checking teh states having non terminal just after the LR(0) items. If there is, we need to go and check the productions of that state and find the beginning LR(0) items. We need to fire epsilon from the source to the target state.</pre>
+<p class="text-center"><img src="Pictures/Dec-22nd.2.png" alt="Dec22nd"></p>
+<pre
+    class="text-start">merging the states having same target state. and numbering them randomly to be used in parsing table in the future. duplication is also removed to make it proper DFA.</pre>
+<p class="text-center"><img src="Pictures/Dec-22nd.3.png" alt="Dec22nd"></p>
+<pre class="text-start">follow sets are computed and '=' can be seen in the FOLLOW(V).
+
+    because, S = > V = E , according to the rule # 2
+</pre>
+<p class="text-center"><img src="Pictures/Dec-22nd.4.png" alt="Dec22nd"></p>
+<pre class="text-start">
+    parsing table gives last state 7 a reduce reduced conflict because we have 2 reduce states in $ column. '=' has only one reduced rule i.e. r(v=>id) because of the follow(S)
+</pre>
+<hr>
+<p class="text-start dates">Dec 27th, 2023</p>
+<p class="text-center"><img src="Pictures/Dec27th.CC.1.png" alt="Dec27th"></p>
+<p class="text-center"><img src="Pictures/Dec27th.CC.2.png" alt="Dec27th"></p>
+<p class="text-center"><img src="Pictures/Dec27th.CC.3.png" alt="Dec27th"></p>
+<p class="text-center"><img src="Pictures/Dec27th.CC.4.png" alt="Dec27th"></p>
+<p class="text-center"><img src="Pictures/Dec27th.CC.5.png" alt="Dec27th"></p>
+<hr>
+<p class="Dec29th">Dec 29th, 2023</p>
+<p class="text-center"><img src="Pictures/Dec29th.CC.1.png" alt="Dec29th"></p>
+<p class="text-center"><img src="Pictures/Dec29th.CC.2.png" alt="Dec29th"></p>
+<p class="text-center"><img src="Pictures/Dec29th.CC.3.png" alt="Dec29th"></p>
+<p class="text-center"><img src="Pictures/Dec29th.CC.4.png" alt="Dec29th"></p>
+<hr>
+<p class="text-start dates">Jan 3rd, 2023</p>
+<h6 class="text-center">SLR (1)</h6>
+<p class="text-center"><img src="Pictures/Jan3rdCC.1.png" alt="Jan3rd"></p>
+<p class="text-center"><img src="Pictures/Jan3rdCC.2.png" alt="Jan3rd"></p>
+<p class="text-center"><img src="Pictures/Jan3rdCC.3.png" alt="Jan3rd"></p>
+<h6 class="text-center">LR(1)</h6>
+<p class="text-center"><img src="Pictures/Jan3rdCC.4.png" alt="Jan3rd"></p>
+<p class="text-center"><img src="Pictures/Jan3rdCC.5.png" alt="Jan3rd"></p>
+<pre
+    class="text-start">when we have non terminal after dot, we merge the productions it has. look ahead symbol is calculated, based on the previous lookahead production rule. at first, we calculate the follow set to get the lookahead symbol.</pre>
+<hr>
+<p class="text-start dates">Jan 5th, 2023</p>
+<img src="" alt="Add images here">
+<hr>
+<p class="text-start dates">Jan 10th, 2023</p>
+<h6 class="text-center">Semantics / Syntax / Attribute Grammar</h6>
+<pre class="text-start">
+    parser will consider any number as String
+    semantic analyser will make it a number using attribute rules 
+    most important attribute of a number is its value 
+    using attributes, we create semantic rule 
+    value of single digit is as it is.
+</pre>
+<pre class="text-start">
+    number => number digit | digit 
+    digit => 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+</pre>
+<table >
+    <tr>
+        <th>Grammar Rules</th>
+        <th>Semantic Rules</th>
+    </tr>
+    <tr>
+        <td>number => number digit</td>
+        <td>number1.value = number2.value + digit.value</td>
+    </tr>
+<tr>
+    <td>number => digit</td>
+    <td>number.value = digit.value</td>
+</tr>
+<tr>
+    <td>digit => 0</td>
+    <td>digit.value = 0</td>
+</tr>
+<tr>
+    <td>digit => 1</td>
+    <td>digit.value = 1</td>
+</tr>
+<tr>
+    <td>digit => 2</td>
+    <td>digit.value = 2</td>
+</tr>
+<tr>
+    <td>digit => 3</td>
+    <td>digit.value = 3</td>
+</tr>
+<tr>
+    <td>digit => 4</td>
+    <td>digit.value = 4</td>
+</tr>
+<tr>
+    <td>digit => 5</td>
+    <td>digit.value = 5</td>
+</tr>
+<tr>
+    <td>digit => 6</td>
+    <td>digit.value = 6</td>
+</tr>
+<tr>
+    <td>digit => 7</td>
+    <td>digit.value = 7</td>
+</tr>
+<tr>
+    <td>digit => 8</td>
+    <td>digit.value = 8</td>
+</tr>
+<tr>
+    <td>digit => 9</td>
+    <td>digit.value = 9</td>
+</tr>
+</table>
+<pre class="text-start">then, we make a parsing / syntax table using the table above. this is to give values to every string. #Semantics</pre>
+<p class="text-center"><img src="Pictures/Jan10th.CC.1.jpg" alt="Jan10th"></p>
+<p class="text-center"><img src="Pictures/Jan10th.CC.2.jpg" alt="Jan10th"></p>
+<pre class="text-start">why we keep identifiers in a separate symbol table? why special treatment? because they represent data elements and are present in several lines of code. otherwise, in classification, identifiers are kept as other tokkens, separate from symbols.
+    
+largest data structure :- syntax tree 
+second largest ds :- symbol table 
+during compilation 
+</pre>
+<h6 class="text-center">Symbol Table</h6>
+<pre class="text-start">standard operations in dictionary data structure</pre>
+<ol type="1">
+<li>Insert</li>
+<li>Look up (search)</li>
+<li>Delete</li>
+</ol>
+<p class="text-start">common algorithm speeds</p>
+<ul>
+    <li>O(1)</li>
+    <li>O(logn)</li>
+    <li>O(nlogn)</li>
+    <li>O(n)</li>
+    <li>O(n)<sup>2</sup></li>
+    <li>O(n)<sup>3</sup></li>
+</ul>
+<hr>
+<p class="text-start dates">Jan 12th, 2023</p>
+<h6 class="text-center">Symbol Table</h6>
+<table >
+    <tr>
+        <th>Linear Data Structures</th>
+        <th>Non Linear Data Structures</th>
+    </tr>
+    <tr>
+        <td>Arrays / Link Lists</td>
+        <td>Trees / Grass</td>
+    </tr>
+    <tr>
+        <td>Grow in one direction</td>
+        <td>diverse directions</td>
+    </tr>
+    <tr>
+        <td>simple</td>
+        <td>complex</td>
+    </tr>
+    </table>
+    <p class="text-start">
+        link list (growable) or array (constant) acts as building block of other data structures. stack also use link lists and arrays for creation.
+    </p>
+    <h6 class="text-center">
+        Dictionary Operations in Data Structures
+    </h6>
+    <p class="text-start">There are 3 main operations.</p>
+    <ol>
+        <li>Insertions</li>
+        <p class="text-start">2 operations are performed in insertion, regardless of size and position. these are store and increment.</p>
+        <pre class="text-start">the time complexity is Insert O(1) which is considered as best.</pre>
+        <li>Lookup</li>
+        <p class="text-start">2 operations are performed in lookup, regardless of size and position. these are comparison and increment.</p>
+        <pre class="text-start">the time complexity is Lookup O(n) which is worst.</pre>
+        <li>Deletion</li>
+        <p class="text-start">deletion requires search first</p>
+        <pre class="text-start">Therefore, the time complexity of deletion is even worst Delete O(n)</pre>
+    </ol>
+    <p class="text-start">data structure that has almost good time complexity for all the 3 dictionary operations is a harsh table. </p>
+    <h6 class="text-center">Harsh Table</h6>
+    <p class="text-start">Harsh table provides almost constant time for each of 3 operations. and is among the linear data structures.</p>
+    <p class="text-start">components of harsh table:-</p>
+    <ul>
+        <li>bucket: storage / compartments</li>
+        <li>value: bucket has value</li>
+        <li>key: data element is stored.</li>
+    </ul>
+
+    <p class="text-center">    <img src="Pictures/harsh-table.jpg" alt="Harsh Table"></p>
+    <p class="text-start">the sole of harsh table is harsh function which is:-</p>
+    <pre class="text-start">
+        harsh(key) {
+            return value 
+        }
+    </pre>
+    <pre class="text-start">that was all about insertion, now let's move on to lookup operation.
+
+        for lookup, we don't search sequentially like in linklist or arrays, rather, we ask for value of key and we look to that value bucket. if it's there than ok, else it doesn't exist.
+        
+        the same way is used for deletion.
+    </pre>
+    <pre class="text-start">
+        This way, harsh function offers constant time for all 3 dictionary operations.
+
+        if 2 different identifiers have same value as harsh function produces values randomly and can produce single value twice if we have 10 buckets and values to put are 20.
+        </pre>
+        <h6 class="text-center">Hash-Collision</h6>
+        <pre class="text-start">
+            to resolve this problem, we have 2 solutions...
+        </pre>
+        <ol>
+            <li>open addressing: store the second value in the next open / available space. this is not very effective method.</li>
+            <li>separate chaining: more flexible and dynamic. considers all buckets as link list.</li>
+        </ol>
+        
+        <p class="text-center"><img src="Pictures/separate-chaining.jpg" alt="separate-chaining"></p>
+        <pre class="text-start">so we have to make hash function optimized. it may repeat the values but make the table balanced by keeping the number of times to repeated for each bucket nearly equal to the other.
+
+            SYMBOL TABLES USE HASH TABLE. It is most important data structure in compilation process.
+        </pre>
+        <hr>
+        <p class="text-start dates">Jan 19th, 2024</p>
+        <table >
+            <tr>
+                <th>Tree</th>
+                <th>Graph</th>
+            </tr>
+            <tr>
+                <td>Single Parent</td>
+                <td>More than one Parent</td>
+            </tr>
+            <tr>
+                <td>no loop</td>
+                <td>loop exists</td>
+            </tr>
+        </table>
+        <pre class="text-start">
+Source Code => Scanner => Parser => Semantic Analyser (Frontend)
+
+=> Intermediate Code Generator => Machine Language (Backend)
+        </pre>
+        <h6 class="text-center">Directed Acycle Graph (DAG)</h6>
+<p class="text-start">it is of 3 main types:- </p>
+<ol>
+    <li>Directed</li>
+    <li>Acycle</li>
+    <li>Simple Graph</li>
+</ol>
+<p class="text-start">DAG represents common subsequence of an expression only once. And, is generated by syntax tree. Then, syntax tree is converted to equivalent DAG.</p>
+
+
+
+<div class="text-center"><img src="Pictures/DAG1.png" alt="DAG1"></div>
+<div class="text-center"><img src="Pictures/DAG2.png" alt="DAG2"></div>
+<div class="text-center"><img src="Pictures/DAG3.png" alt="DAG3"></div>
+<h6 class="text-center">Textual Representation / Value Number Method</h6>
+<p class="text-start">We store every node in the form of record, 2 cells in each record, every cell has a key.</p>
+<div class="text-center"><img src="Pictures/DAG4.png" alt="DAG4"></div>
+<div class="text-center"><img src="Pictures/DAG5.png" alt="DAG5"></div>
+<div class="text-center"><img src="Pictures/DAG6.png" alt="DAG6"></div>
+
+
+
+<hr>
+<h6 class="text-center">Good Luck for the Examinations!</h6>
+
+</body>
+</html>
